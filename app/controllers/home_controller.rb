@@ -48,7 +48,7 @@ class HomeController < ApplicationController
             Product.create(name: name, amount: amount)
         elsif params[:function] == "sell"
             render plain: "ERROR" and return unless params[:name]
-            render plain: "ERROR" and return unless params[:amount].match(/^[0-9]+$/)
+            render plain: "ERROR" and return unless params[:amount]&.match(/^[0-9]+$/)
             order_amount = params[:amount].to_i || 1
             price = params[:price].to_i || 0
             product = Product.where(name: params[:name]).first

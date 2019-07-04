@@ -56,7 +56,6 @@ class HomeController < ApplicationController
             product.update(amount: rest_amount)
             product.sales.create(price: 0, amount: order_amount)
         elsif params[:function] == "checksales"
-            binding.pry
             sum = Sale.all.map{|sale| sale.price * sale.amount}.sum()
             render plain: "sales: #{sum}" and return
         end

@@ -41,6 +41,7 @@ class HomeController < ApplicationController
             text = products.map{|product| "#{product.name}: #{product.amount}"}.join("\n")
             render plain: text and return
         elsif params[:function] == "addstock"
+            render plain: "ERROR" if params[:amount] == Float
             render plain: "ERROR" and return unless params[:name]
             name = params[:name]
             amount = params[:amount] || 1
@@ -49,12 +50,12 @@ class HomeController < ApplicationController
             render plain: "ERROR" and return unless params[:name]
             render plain: "ERROR" if params[:amount] == Float
             order_amount = params[:amount].to_i || 1
-            price = params[:price] || 0
+            price = params[:price].to_i || 0
             product = Product.where(name: params[:name]).first
             render plain: "ERROR" and return unless product
             rest_amount = product.amount - order_amount
             product.update(amount: rest_amount)
-            product.sales.create(price: 0, amount: order_amount)
+            product.sales.create(price: 0, amount: order_amount, price: price)
         elsif params[:function] == "checksales"
             sum = Sale.all.map{|sale| sale.price * sale.amount}.sum()
             render plain: "sales: #{sum}" and return

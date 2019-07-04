@@ -28,6 +28,37 @@ class HomeController < ApplicationController
     end
 
     def stocker
-        render plain: "hoge"
+        ## 全部データを削除
+        if params[:function] == "deleteall"
+            Sale.delete_all
+            Product.delete_all
+        elsif params[:function] == "checkstock"
+            if params[:name]
+                products = Product.where(name: params[:name])
+            else
+                products = Product.all.order(name: :asc)
+            end
+            text = products.map{|product| "#{product.name}: #{product.amount}"}.join("\n")
+            render plain: text and return
+        elsif params[:function] == "addstock"
+            render plain: "ERROR" and return unless params[:name]
+            name = params[:name]
+            amount = params[:amount] || 1
+            Product.create(name: name, amount: amount)
+        elsif params[:function] == "sell"
+            render plain: "ERROR" and return unless params[:name]
+            order_amount = params[:amount].to_i || 1
+            price = params[:price] || 0
+            product = Product.where(name: params[:name]).first
+            render plain: "ERROR" and return unless product
+            rest_amount = product.amount - order_amount
+            product.update(amount: rest_amount)
+            product.sales.create(price: 0, amount: order_amount)
+        elsif params[:function] == "checksales"
+            binding.pry
+            sum = Sale.all.map{|sale| sale.price * sale.amount}.sum()
+            render plain: "sales: #{sum}" and return
+        end
+        render plain: ""
     end
 end

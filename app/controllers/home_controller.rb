@@ -41,7 +41,7 @@ class HomeController < ApplicationController
             text = products.map{|product| "#{product.name}: #{product.amount}"}.join("\n")
             render plain: text and return
         elsif params[:function] == "addstock"
-            render plain: "ERROR" and return unless params[:amount].match(/^[0-9]+$/)
+            render plain: "ERROR" and return unless params[:amount]&.match(/^[0-9]+$/)
             render plain: "ERROR" and return unless params[:name]
             name = params[:name]
             amount = params[:amount] || 1

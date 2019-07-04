@@ -47,6 +47,7 @@ class HomeController < ApplicationController
             Product.create(name: name, amount: amount)
         elsif params[:function] == "sell"
             render plain: "ERROR" and return unless params[:name]
+            render plain: "ERROR" if params[:amount] == Float
             order_amount = params[:amount].to_i || 1
             price = params[:price] || 0
             product = Product.where(name: params[:name]).first
